@@ -1,0 +1,10 @@
+{
+    "host": "localhost",
+    "user": "vinay",
+    "password": "VinayKumar",
+    "database": "project",
+    "waitForConnections": "true",
+    "connectionLimit": "10",
+    "queueLimit": "0"
+}
+
