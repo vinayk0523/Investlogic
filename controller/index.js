@@ -1,7 +1,12 @@
 const {logService, signService} = require('../services')
 const cryptoJs = require("crypto-js")
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken');
+const secretKey = 'vinaykumar';
+const pdfPath = '/home/vinay/Desktop/vinayProject1/frontend/my-react-app/src/media/pdf'
+const fs = require('fs')
 
+const firstpdfPath = '/home/vinay/Desktop/vinayProject1/frontend/my-react-app/public/pdf/pdf1.pdf '
 
 const {passwordRegex, emailRegex, nameRegex} = require('../constant')
 
@@ -45,6 +50,10 @@ const loginController = async (req,res) => {
             }
 
 
+
+
+
+
             //cryptoJs :-
                 // console.log("<<",loginOutput[0]);
                 // const salt =loginOutput[0].salt;
@@ -71,6 +80,25 @@ const loginController = async (req,res) => {
                 // return result;
         
             else{
+
+                const {id,name} = loginOutput;
+            
+               
+
+                const user = { id: id, name: name };        
+                const token = jwt.sign(user, secretKey, { expiresIn: '60s' });
+
+                console.log("<<<>>>",token)
+
+                
+            
+                
+
+                res.cookie('token',token,{httpOnly: false, secure: true, sameSite: 'none' });
+
+   
+
+                
                 return res.send({
                     success: true,
                     message: "logged In!!",
@@ -181,6 +209,64 @@ const signController = async (req,res) => {
 
 
 
-module.exports = {loginController,signController}
+const homeController =(req,res) => {
+console.log("sad")
+ const id = req.id;
+ res.send({"id":id});
+}
+
+
+const policyController = (req, res) => {
+      
+    try{
+      const policy = fs.readdirSync(pdfPath)
+      const policyData = []
+      let serialNum = 0;
+      policy.map(item => {
+        if(item.includes('.pdf')){
+            serialNum  += 1;
+           const element = {
+            serialNum  : serialNum ,
+             file : item
+           } 
+           policyData.push(element)
+        }
+      })
+      return res.send({
+          success : true,
+          message : "SUCCESS",
+          policyData
+      })
+    }catch(err){
+      console.log(err);
+      return res.send({
+        success : false,
+        message : "ERROR"
+      })
+    }
+}
+
+
+   
+    const pdfController = (req, res) => {
+        try{
+            res.send({
+                success : "true",
+                message : "PDF path successfully send",
+                firstpdfPath
+            }) 
+          }catch(err){
+             console.log(err);
+          }
+
+    }
+
+
+
+
+
+
+
+module.exports = {loginController,signController,homeController, policyController, pdfController}
 
 
