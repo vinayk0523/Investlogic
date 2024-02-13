@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken');
 const secretKey = 'vinaykumar';
 const pdfPath = '/home/vinay/Desktop/vinayProject1/frontend/my-react-app/src/media/pdf'
 const fs = require('fs')
-
 const firstpdfPath = '/home/vinay/Desktop/vinayProject1/frontend/my-react-app/public/pdf/pdf1.pdf '
-
 const {passwordRegex, emailRegex, nameRegex} = require('../constant')
+
+
 
 const loginController = async (req,res) => {
 
@@ -26,14 +26,7 @@ const loginController = async (req,res) => {
         else{
             const loginData = {email,password}
             const loginOutput = await logService(loginData)
-            
-            // if(loginOutput === 'error'){
-            //     return res.send({
-            //         success : false,
-            //         message : "error in logging",
-            //         loginOutput : {}
-            //     });
-            // }
+
              if (loginOutput === 'user not found'){
                 return res.send({
                     success: false,
@@ -50,11 +43,7 @@ const loginController = async (req,res) => {
             }
 
 
-
-
-
-
-            //cryptoJs :-
+            // Using cryptoJs :-
                 // console.log("<<",loginOutput[0]);
                 // const salt =loginOutput[0].salt;
                 // const hashpasswordMy = cryptoJs.SHA256(password + salt).toString();
@@ -79,13 +68,16 @@ const loginController = async (req,res) => {
                 // console.log("Result" , result);
                 // return result;
         
+
             else{
 
-                const {id,name} = loginOutput;
-            
-               
 
-                const user = { id: id, name: name };        
+
+                console.log("login output", loginOutput)
+
+                const user = { id: loginOutput[0].id, name: loginOutput[0].name };  
+                console.log("user ", user);
+
                 const token = jwt.sign(user, secretKey, { expiresIn: '60s' });
 
                 console.log("<<<>>>",token)
@@ -94,7 +86,7 @@ const loginController = async (req,res) => {
             
                 
 
-                res.cookie('token',token,{httpOnly: false, secure: true, sameSite: 'none' });
+                res.cookie('token',token,{httpOnly: true, secure: true, sameSite: 'none' });
 
    
 
@@ -104,6 +96,21 @@ const loginController = async (req,res) => {
                     message: "logged In!!",
                     loginOutput,
                 });
+
+                // const {id,name} = loginOutput[0];
+                // console.log("testing",loginOutput);
+                // const user = { id, name };        
+                // jwt.sign(user, secretKey, {expiresIn: '60s'}, (err, token)=>{
+                //     console.log("tokenlogin----",token);
+                //     res.cookie('token', token, {httpOnly: true});
+                //     return res.send({
+                //         success: true,
+                //         message: "logged In!",
+                //         loginOutput
+                //     });
+                // });
+
+
             }
              
         }
@@ -118,6 +125,47 @@ const loginController = async (req,res) => {
     }
 }
 
+
+
+
+
+// const profileController = async (req,res) => {
+//     jwt.verify(req.token, secretKey, (err, authData)=>{
+//         console.log("req.token---", req.token,authData,err);
+//         if(err){
+//             return res.send({
+//                 success: false,
+//                 message: "session expired",
+//                 authData: {},
+//             });
+//         }
+//         else{
+//             if(!authData){
+//                 console.log("undefined authData");
+//                 return res.send({
+//                     success: false,
+//                     message: "session expired",
+//                     authData:  {}
+//                 });
+//             }
+//             console.log("data sent to frontend");
+//             return res.send({
+//                 success: true,
+//                 message: "Token verified",
+//                 authData
+//             });
+//         }
+//     });
+// }
+
+
+const homeController =(req,res) => {
+console.log("sad")
+ const id = req.id;
+ res.send({"id":id});
+}
+
+
 const signController = async (req,res) => {
 
     try{
@@ -131,14 +179,6 @@ const signController = async (req,res) => {
                 result : {}
             })
         }
-
-        // if(!name || !email || !password){
-        //     return res.send({
-        //         success : false,
-        //         message : "enter name, email or password",
-        //         result : {}
-        //     })
-        // }
 
         else if (!password.match(passwordRegex)){
             return res.send({
@@ -174,13 +214,6 @@ const signController = async (req,res) => {
             const signupOutput = await signService(signupData)
             console.log("signupcontroller ", signupOutput);
 
-            // if(signupOutput === "error"){
-            //     return res.send({
-            //         success: false,
-            //         message: "unable to create user",
-            //         signupOutput: {},
-            //     });
-            // }
             if (signupOutput === "user exist"){
                 return res.send({
                     success: false,
@@ -209,11 +242,7 @@ const signController = async (req,res) => {
 
 
 
-const homeController =(req,res) => {
-console.log("sad")
- const id = req.id;
- res.send({"id":id});
-}
+
 
 
 const policyController = (req, res) => {
@@ -248,7 +277,7 @@ const policyController = (req, res) => {
 
 
    
-    const pdfController = (req, res) => {
+const pdfController = (req, res) => {
         try{
             res.send({
                 success : "true",
@@ -258,15 +287,11 @@ const policyController = (req, res) => {
           }catch(err){
              console.log(err);
           }
-
     }
 
 
 
 
-
-
-
-module.exports = {loginController,signController,homeController, policyController, pdfController}
+module.exports = {loginController,signController, policyController, pdfController, homeController}
 
 

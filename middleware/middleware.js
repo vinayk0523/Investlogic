@@ -15,15 +15,15 @@ const verifyToken = async(req , res , next)=>{
             }
             
             req.id= payload.id;
-            console.log('hi')
-            // res.send(
-            //     "user exist"
-            // )
-            next();
+        
+            console.log("payload id", payload.id)
             
+        //    return res.send(
+        //         "user exist yoo!!"        
+        //     )
+            return res.send({
+                "id" : payload.id
+            })     
         })
-        
-        
-
 }
 module.exports = {verifyToken};

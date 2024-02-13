@@ -10,6 +10,7 @@ router.get('/getdata',verifyToken,homeController);
 router.get('/getPolicyData',policyController)
 
 router.get('/getPdf',pdfController)
+
 module.exports = router;
 
 
